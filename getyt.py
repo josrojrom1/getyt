@@ -13,7 +13,7 @@ print("\n")
 
 time.sleep(1)
 
-url=input("Paste here the URL to download (age restricted videos not allow yet)-> ")
+url=input("URL to download (age restricted videos not allow yet)-> ")
 
 downloadLocation="/home/tric0/Descargas"
 
@@ -31,7 +31,7 @@ while True:
 
 
 def download_audio(url,path):
-    youtube=YouTube(url, on_progress_callback=on_progress)
+    youtube=YouTube(url, on_progress_callback=on_progress, use_oauth=True,allow_oauth_cache=True)
     # we take only the video formats.
     # change progressive to only_audio for audio
     my_audio=youtube.streams.get_audio_only()
@@ -58,16 +58,16 @@ def download_audio(url,path):
     print("\n")
 
     time.sleep(1)
+
 def download_video(url,path):
-    youtube=YouTube(url, on_progress_callback=on_progress)
+    youtube=YouTube(url, on_progress_callback=on_progress, use_oauth=True,allow_oauth_cache=True)
     # we take only the video formats.
     # change progressive to only_audio for audio
     my_video=youtube.streams.get_highest_resolution()
     yt_title=youtube.title
     print("Maximum resolution for: " + yt_title + "\n")
     
-    # print avaible resolutions
-    
+    # print maximum resolutions
     print("[ "+my_video.resolution+" ]")
 
     print("\n")
@@ -81,7 +81,7 @@ def download_video(url,path):
         elif agreement == "n":
             return
         else:
-            print("Invalid argument -> " + agreement + ", please try again")
+            print("Invalid argument -> " + agreement + ", please try again!")
 
     # download the video
     # progress bar
@@ -92,9 +92,10 @@ def download_video(url,path):
 
 
 if str(download_type)=="a":
-    
     download_audio(url,downloadLocation)
+
 elif str(download_type)=="v":
     download_video(url,downloadLocation)
+
 else:
-    print("Invalid argument -> "+download_type+", please try again")
+    print("Invalid argument -> "+download_type+", please try again!")
