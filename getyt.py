@@ -3,22 +3,33 @@ import os
 import time
 from pytube.cli import on_progress
 
+#-------------------------------------------------------------
 os.system('clear')
 
-# banner
+#-------BANNER-------------------------------------------------
 banner = open("banner.txt", "r")
 print(banner.read())
-
 print("\n")
-
 time.sleep(1)
+#-------FIRST INPUT--------------------------------------------
+url=input("Insert URL -> ")
 
-url=input("URL to download (age restricted videos not allow yet)-> ")
+#-------DOWNLOADS FOLDER PATH----------------------------------
+def get_downloads_folder_path():
+  #Returns the download path of your os
 
-downloadLocation="/home/tric0/Descargas"
+    if os.name == "nt":
+    # Windows
+        return os.path.join(os.getenv("USERPROFILE"), "Downloads")
+    else:
+    # Linux o macOS
+        return os.path.join(os.path.expanduser("~"), "Downloads")
 
+#-------DOWNLOAD PATH VARIABLE---------------------------------
+download_location = get_downloads_folder_path()
 print("\n")
 
+#-------DOWNLOAD AUDIO/VIDEO OPTIONS----------------------------
 while True:
     download_type = input("Type a/v if you want to download audio/video -> ")
 
@@ -27,17 +38,12 @@ while True:
     else:
         print("Invalid argument -> " + download_type + ", please try again")
 
-
-
-
+#-------DOWNLOAD AUDIO FUNCTION----------------------------------
 def download_audio(url,path):
     youtube=YouTube(url, on_progress_callback=on_progress, use_oauth=True,allow_oauth_cache=True)
-    # we take only the video formats.
-    # change progressive to only_audio for audio
     my_audio=youtube.streams.get_audio_only()
     yt_title=youtube.title
     print("Title: "+yt_title)
-
 
     while True:
         agreement= input(" Do you want to download audio? Type y/n -> ")
@@ -48,30 +54,22 @@ def download_audio(url,path):
         else:
             print("Invalid argument -> " + agreement + ", please try again")  
 
-    # download the audio
-    # progress bar
+    # download the audio and progress bar
     print("Downloading audio [ "+yt_title+" ]...:")
     my_audio.download(output_path=path)
     print("Your audio is downloaded succesfully!")
-
-
     print("\n")
-
     time.sleep(1)
 
+#-------DOWNLOAD VIDEO FUNCTION----------------------------------
 def download_video(url,path):
     youtube=YouTube(url, on_progress_callback=on_progress, use_oauth=True,allow_oauth_cache=True)
-    # we take only the video formats.
-    # change progressive to only_audio for audio
     my_video=youtube.streams.get_highest_resolution()
     yt_title=youtube.title
     print("Maximum resolution for: " + yt_title + "\n")
-    
-    # print maximum resolutions
+    # print maximum resolution
     print("[ "+my_video.resolution+" ]")
-
     print("\n")
-
     time.sleep(1)
 
     while True:
@@ -83,19 +81,17 @@ def download_video(url,path):
         else:
             print("Invalid argument -> " + agreement + ", please try again!")
 
-    # download the video
-    # progress bar
+    # download the video and progress bar
     print("Downloading video [ "+yt_title+" ]...:")
     my_video.download(output_path=path)
     print("Your video is downloaded succesfully!")
     
-
-
+#-------FUNCTION CALLS-------------------------------------------
 if str(download_type)=="a":
-    download_audio(url,downloadLocation)
+    download_audio(url,download_location)
 
 elif str(download_type)=="v":
-    download_video(url,downloadLocation)
+    download_video(url,download_location)
 
 else:
     print("Invalid argument -> "+download_type+", please try again!")
