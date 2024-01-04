@@ -3,13 +3,13 @@ Welcome to getyt project!
 
 Hi im tric0, and getyt is a tool designed in Python to learn how to work with Youtube streams, only for legal purposes.
 
-                                                        INDEX
+                                                      INDEX
                                                 
-                                                    1 - Installation guide
-                                                      1.1 - Windows
-                                                      1.2 - Linux
-                                                    2 - Python libraries
-                                                    3 - Avaible functions
+                                                  1 - Installation guide
+                                                    1.1 - Windows
+                                                    1.2 - Linux
+                                                  2 - Python libraries
+                                                  3 - Avaible functions
 
 
 1 - INSTALLATION GUIDE
