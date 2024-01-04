@@ -34,6 +34,7 @@ Hi im tric0, and getyt is a tool designed in Python to learn how to work with Yo
     - python getyt.py
 
 2 - PYTHON LIBRARIES
+
     In this project we are using the next modules:
 
     - os
@@ -41,6 +42,7 @@ Hi im tric0, and getyt is a tool designed in Python to learn how to work with Yo
     - tkinter (Tk, Label, Button, Entry, PhotoImage, RIDGE, filedialog)
 
 3 - AVAIBLE FUNCTIONS
+
     In the actual version of getyt you can use the following functions:
 
     - GUI for getyt with tkinter
