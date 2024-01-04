@@ -39,8 +39,7 @@ root.resizable(False, False)
 root.geometry("475x400")
 root.config(bg=background_color)
 root.title("YouTube Downloader")
-icon = PhotoImage(file="icon.png")
-root.iconphoto(True, icon)
+root.iconbitmap("icon.ico")
 
 if os.name == "nt":
     # Windows
