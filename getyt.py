@@ -96,13 +96,11 @@ def download(url, format, path):
 ### DOWNLOAD AUDIO FUNCTION #
 def downloadAudio(url,path):
     format = "audio"
-    get_downloads_folder_path()
     download(url, format, path)
     
 ### DOWNLOAD VIDEO FUNCTION #
 def downloadVideo(url, path):
     format = "video"
-    get_downloads_folder_path()
     download(url, format, path)
  
 ### PROGRESS % FUNCTION ###
