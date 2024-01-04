@@ -1,4 +1,4 @@
-# getyt
+# getyt v2.0
 Welcome to getyt project!
 
 Hi im tric0, and getyt is a tool designed in Python to learn how to work with Youtube streams, only for legal purposes.
@@ -24,27 +24,31 @@ Hi im tric0, and getyt is a tool designed in Python to learn how to work with Yo
     - cd getyt
 
     Activate virtual environment:
-    - source entornovirtual/bin/activate
+    - source venv_getyt/Scripts/activate
 
     Install python libraries if you dont have them:
-    - pip install pytube pytube.cli
+    - pip install pytube
+    - pip install tk
 
     Run the python script. You have to be in getyt directory:
     - python getyt.py
 
 2 - PYTHON LIBRARIES
-    In this project we are using the next dependencies:
 
-    - pytube
-    - pytube.cli
+    In this project we are using the next modules:
+
     - os
-    - time
+    - pytube (YouTube)
+    - tkinter (Tk, Label, Button, Entry, PhotoImage, RIDGE, filedialog)
 
 3 - AVAIBLE FUNCTIONS
+
     In the actual version of getyt you can use the following functions:
 
+    - GUI for getyt with tkinter
+    - Check if URL is valid
+    - Error logs
     - Download audio from YouTube URL
-    - Download video in the highest resolution
-    - Oauth anc oauth_cache for bypassing age restricted videos (using youtube account)
-
-
+    - Download highest resolution video from Youtube URL
+    - Download folder path selection
+    - Try to bypass age restricted video
