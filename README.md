@@ -1,4 +1,4 @@
-# getyt v3.0.0
+# getyt v3.1.0
 Welcome to getyt project!
 
 Hi im tric0, and getyt is a tool designed in Python to learn how to work with Youtube streams, only for legal purposes.
@@ -18,7 +18,7 @@ Hi im tric0, and getyt is a tool designed in Python to learn how to work with Yo
     
    1.1 -  Installation process on WINDOWS:
 
-            Clone the repository or download the ZIP code. Exec getyt.exe and its done.
+            Clone the repository or download the ZIP code. Run getyt.exe.
     
    1.2 -  Installation process on LINUX: 
 
