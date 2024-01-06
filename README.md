@@ -1,4 +1,4 @@
-# getyt v2.0
+# getyt v3.0.0
 Welcome to getyt project!
 
 Hi im tric0, and getyt is a tool designed in Python to learn how to work with Youtube streams, only for legal purposes.
@@ -47,16 +47,16 @@ Hi im tric0, and getyt is a tool designed in Python to learn how to work with Yo
 
     - os
     - pytube (YouTube)
-    - tkinter (Tk, Label, Button, Entry, PhotoImage, RIDGE, filedialog)
+    - tkinter (Tk, Label, Button, Entry, RIDGE, filedialog)
 
 3 - AVAIBLE FUNCTIONS
 
     In the actual version of getyt you can use the following functions:
 
-    - GUI for getyt with tkinter
+    - GUI for getyt designed with tkinter
     - Check if URL is valid
     - Error logs
     - Download audio from YouTube URL
     - Download highest resolution video from Youtube URL
-    - Download folder path selection
+    - Download folder path selector
     - Try to bypass age restricted video
