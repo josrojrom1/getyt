@@ -3,35 +3,43 @@ Welcome to getyt project!
 
 Hi im tric0, and getyt is a tool designed in Python to learn how to work with Youtube streams, only for legal purposes.
 
-        INDEX
-
-    1 - Installation guide
-    2 - Python libraries
-    3 - Avaible functions
+                                                      INDEX
+                                                
+                                                  1 - Installation guide
+                                                    1.1 - Windows
+                                                    1.2 - Linux
+                                                  2 - Python libraries
+                                                  3 - Avaible functions
 
 
 1 - INSTALLATION GUIDE
 
     If you want to install it make sure to follow the instructions below to make it work.
+    
+   1.1 -  Installation process on WINDOWS:
 
-    Install Python and virtual environment for install all the dependencies:
-    - sudo pacman -S python python-virtualenv
+            Clone the repository or download the ZIP code. Exec getyt.exe and its done.
+    
+   1.2 -  Installation process on LINUX: 
 
-    Clone the repository from GitHub in the actual route:
-    - git clone https://github.com/tric0ma/getyt.git
-
-    Change directory and go inside the new folder called "getyt":
-    - cd getyt
-
-    Activate virtual environment:
-    - source venv_getyt/Scripts/activate
-
-    Install python libraries if you dont have them:
-    - pip install pytube
-    - pip install tk
-
-    Run the python script. You have to be in getyt directory:
-    - python getyt.py
+            Clone the repository from GitHub in the actual route:
+            - git clone https://github.com/tric0ma/getyt.git
+        
+            Change directory and go inside the new folder called "getyt":
+            - cd getyt
+            
+            Activate virtual environment:
+            - source venv_getyt/bin/activate
+        
+            Install the dependencies:
+            - pip install -r requirements.txt 
+                
+            (optional) Install python libraries if you dont have requirements.txt:
+            - pip install pytube
+            - pip install tk
+        
+            Run the python script. You have to be in getyt directory:
+            - python getyt.py
 
 2 - PYTHON LIBRARIES
 
