@@ -24,217 +24,193 @@ from tkinter import Tk
 from tkinter import Label
 from tkinter import Entry
 from tkinter import Button
-from tkinter import PhotoImage
 from tkinter import RIDGE
 from tkinter import filedialog
 from pytube import YouTube
 
-### COLOR SCHEMA ############
-background_color = "#313338"
-font_color = "#FFFFFF"
+class getyt:
+    def __init__(self):
+        ### URL INPUT LABEL ##########
+        self.url_label = Label(root, text="Insert URL from YouTube")
+        self.url_label.config(anchor="center", font=("Arial", 18), fg=font_color, background=background_color, padx=12, pady=12)
+        self.url_label.grid(row=0, column=0)
+        ### URL ENTRY ################
+        self.url = Entry(root, width=40, font=("Arial", 14), fg=font_color, background=background_color, borderwidth=1)
+        self.url.focus()
+        self.url.grid(row=1, column=0)
+        self.url.grid_configure(padx=12)
+        ### CHECK BUTTON #############
+        self.check_button = Button(root,text="Check URL", command=lambda: self.checkURL(getyt_instance.url.get()))
+        self.check_button.config(anchor="center", padx=12, relief=RIDGE, fg=font_color, background=background_color)
+        self.check_button.grid(row=3, column=0)
+        ### DOWNLOAD LOCATION FOLDER ##
+        if os.name == "nt":
+            # Windows
+            self.download_location = os.path.join(os.getenv("USERPROFILE"), "Downloads")
+        #else:
+            # Linux or macOS
+            self.download_location = os.path.join(os.path.expanduser("~"), "Downloads")
+        ### DOWNLOAD LOCATION #######
+        self.download_location_label = Button(root, text="Download path: {}".format(self.download_location), command=self.on_click_download_location) 
+        self.download_location_label.config(anchor="center", font=("Arial", 9), fg=font_color, background=background_color, padx=12, relief=RIDGE)
+        self.download_location_label.grid(row=2, column=0)
+        self.download_location_label.grid_configure(pady=12)
+        ### SHORTED TITLE ############
+        self.url_shorted_title = Label(root, text="")
+        ### DOWNLOAD BUTTONS ########
+        self.download_audio_btn = Button(root, text="Download Audio", command=lambda: self.download_stream(getyt_instance.url.get(), "audio", self.download_location))
+        self.download_video_btn = Button(root, text="Download Video", command=lambda: self.download_stream(getyt_instance.url.get(), "video", self.download_location))
+        ### SUCCESS/ERROR LOGS ##############
+        self.url_ok = Label(root, text="URL OK! ✔")
+        self.url_error = Label(root, text="Error: URL not valid, please try to use a valid one. \n")
+        self.succes = Label(root, text="Download completed! ✔")
+        self.succes.configure(background=background_color, fg="green", font=("Arial", 12))
+        self.info = Label(root, text="(Copy and paste another URL for continue downloading)")
+        self.info.configure(background=background_color, fg=font_color, font=("Arial", 9))
 
-### MAIN FRAME SETTINGS #####
-root = Tk()
-root.resizable(False, False)
-root.geometry("475x400")
-root.config(bg=background_color)
-root.title("YouTube Downloader")
-root.iconbitmap("icon.ico")
-
-if os.name == "nt":
-    # Windows
-        download_location = os.path.join(os.getenv("USERPROFILE"), "Downloads")
-
-else:
-    # Linux or macOS
-        download_location =  os.path.join(os.path.expanduser("~"), "Downloads")
-  
-### DOWNLOAD FOLDER PATH ####
-def get_downloads_folder_path():
-    #global download_location
-
-    download_location = filedialog.askdirectory()
-    if download_location:
-        download_location_label.config(text="Download path: {}".format(download_location))
-
-
-### DOWNLOAD FUNCTION #######
-def download(url, format, path):
-    
-    try:
-        youtube = YouTube(url, on_progress_callback=on_progress_download,use_oauth=False, allow_oauth_cache=False)
-        youtube.bypass_age_gate()
-        filename = youtube.title.replace('\\', " ").replace(">", " ").replace('"', " ").replace("/", " ").replace("|", " ").replace(".", " ").replace("?", " ").replace("*", " ").replace("&", " ").replace(":", " ").replace("<", " ")
-        
-        if format == "video":
-            stream = youtube.streams.get_highest_resolution()
-            file_size = stream.filesize
-            filename = "(video) "+filename
-            if not path:
-                path = get_downloads_folder_path()
-                path = os.path.join(path, filename) 
+    def on_click_download_location(self):
+        self.new_download_location = filedialog.askdirectory()
+        if str(self.new_download_location)=="":
+            if os.name == "nt":
+                # Windows
+                self.new_download_location = os.path.join(os.getenv("USERPROFILE"), "Downloads")
             else:
-                path = os.path.join(path, filename)
-                stream.download(output_path=path)
+                # Linux or macOS
+                self.new_download_location = os.path.join(os.path.expanduser("~"), "Downloads")
+        self.download_location = self.new_download_location
+        self.download_location_label.config(text="Download path: {}".format(self.download_location))
 
-        elif format=="audio":
-            stream = youtube.streams.get_audio_only()
-            file_size = stream.filesize
-
-            filename = "(audio) "+filename
-            if not path:
-                path = get_downloads_folder_path()
-                path = os.path.join(path, filename) 
-            else:
-                path = os.path.join(path, filename)
-                stream.download(output_path=path)
-        
-    except Exception as e:
-        print("Error: " + str(e))
-
-### DOWNLOAD AUDIO FUNCTION #
-def downloadAudio(url,path):
-    format = "audio"
-    download(url, format, path)
-    
-### DOWNLOAD VIDEO FUNCTION #
-def downloadVideo(url, path):
-    format = "video"
-    download(url, format, path)
- 
-### PROGRESS % FUNCTION ###
-def on_progress_download(stream, chunk, bytes_remaining):
-    
-    download_location_label.config(state="normal")
-    download_video_btn.config(state="disabled")
-    download_audio_btn.config(state="disabled")
-    check_button.config(state="disabled")
-    url_entry.config(state="disabled")
-
-    total_size = stream.filesize
-    bytes_downloaded = total_size - bytes_remaining
-    percentage_of_completion = round(bytes_downloaded / total_size * 100, 2)
-    string_percentage = f"Downloading: {percentage_of_completion} %"
-    download_label = Label(root, text=string_percentage)
-    download_label.config(fg=font_color, background=background_color, font=("Arial", 9))
-    download_label.grid(row=8, column=0)
-    root.update()
-    download_label.grid_remove()
-    
-    if percentage_of_completion == 100 :
-
-        download_location_label.config(state="normal")
-        url_error.grid_remove()
-        url_shorted_title.grid_remove()
-        download_video_btn.config(state="disabled")
-        download_audio_btn.config(state="disabled")
-        download_audio_btn.grid_remove()
-        download_video_btn.grid_remove()
-        check_button.config(state="normal")
-        url_entry.config(state="normal")
-        succes.grid(row=5, column=0)
-        succes.grid_configure(pady=12)
-        info.grid(row=6, column=0)
-        info.grid_configure(pady=12)
-
-### URL CHECK FUNCTION ######
-def checkURL(url):
-    global url_shorted_title
-    url_error.grid_remove()
-    succes.grid_remove()
-    info.grid_remove()
-    url_entry.config(state="normal")
-    download_video_btn.config(state="normal")
-    download_audio_btn.config(state="normal")
-    download_audio_btn.grid_remove()
-    download_video_btn.grid_remove()
-    url_ok.grid_remove()
-    #url_shorted_title.grid_remove()   
-       
-
-    
-
-    try:
-        youtube = YouTube(url, on_progress_callback=on_progress_download,use_oauth=False, allow_oauth_cache=False)
-        yt_title= str(youtube.title)
-        yt_title_short=str(youtube.title)[:36] + "..."
-        url_title= Label(root, text=yt_title)
-        url_shorted_title = Label(root, text=yt_title_short)
-        url_title.config(anchor="center", background=background_color, fg=font_color, font=("Arial", 12), padx=12, pady=12)
-        url_shorted_title.config(anchor="center", background=background_color, fg=font_color, font=("Arial", 12), padx=12, pady=12)
-        url_shorted_title.grid(row=5, column=0)
-
+    def checkURL(self,url):
+        self.url_ok.grid_remove()
+        self.url_error.grid_remove()
+        self.succes.grid_remove()
+        self.info.grid_remove()
+        self.url.config(state="normal")
+        self.download_video_btn.config(state="normal")
+        self.download_audio_btn.config(state="normal")
+        self.download_audio_btn.grid_remove()
+        self.download_video_btn.grid_remove()
+        self.url_shorted_title.grid_remove()   
+            
+        try:
+            ### URL INPUT ###############
+            self.youtube = YouTube(url, use_oauth=False, allow_oauth_cache=False)
+            self.yt_title= str(self.youtube.title)
+            self.yt_title_short=str(self.youtube.title)[:36] + "..."
+            self.url_title= Label(root, text=self.yt_title)
+            self.url_shorted_title = Label(root, text=self.yt_title_short)
+            self.url_title.config(anchor="center", background=background_color, fg=font_color, font=("Arial", 12), padx=12, pady=12)
+            self.url_shorted_title.config(anchor="center", background=background_color, fg=font_color, font=("Arial", 12), padx=12, pady=12)
+            self.url_shorted_title.grid(row=5, column=0)
+            ### DOWNLOAD BUTTONS ########
+            self.download_audio_btn.config(relief=RIDGE, fg=font_color, background=background_color, padx=12)
+            self.download_audio_btn.grid(row=6, column=0)
+            self.download_video_btn.config(relief=RIDGE, fg=font_color, background=background_color, padx=12)
+            self.download_video_btn.grid(row=7, column=0)
+            self.download_video_btn.grid_configure(pady=12)
+            ### OK LOG/GREEN CHECK ######
+            self.url_ok.config(background=background_color, fg="green", font=("Arial", 9), pady=12, padx=12)
+            self.url_ok.grid(row=4, column=0)
+            #self.url_error.grid_remove()
                 
-        # BUTTON TO DOWNLOAD AUDIO  #   
-        download_audio_btn.grid(row=6, column=0)
+        except Exception as e:
 
-        # BUTTON TO DOWNLOAD VIDEO  #
-        download_video_btn.grid(row=7, column=0)
-        download_video_btn.grid_configure(pady=12)
-        
-
-        ### OK LOG/GREEN CHECK ######
-        url_ok.grid(row=4, column=0)
-        url_error.grid_remove()
-        
-
-
-
-
-
-    except Exception as e:
-
-        ### INVALID URL INPUT #######
-        url_error.grid(row=4, column=0)
-        url_ok.grid_remove()
-        
-    if url_error.winfo_ismapped():
-        download_video_btn.config(state="disabled")
-        download_audio_btn.config(state="disabled")
+            ### INVALID URL INPUT #######
+            self.url_error.config(fg="red" ,background=background_color, font=("Arial", 9), pady=12, padx=12)
+            self.url_error.grid(row=4, column=0)
+                
+        if self.url_error.winfo_ismapped():
+                self.url_ok.grid_remove()
+                self.download_video_btn.grid_remove()
+                self.download_audio_btn.grid_remove()
     
-### URL INPUT ###############
-url_label = Label(root, text="Insert URL from YouTube")
-url_label.config(anchor="center", font=("Arial", 18), fg=font_color, background=background_color, padx=12, pady=12)
-url_label.grid(row=0, column=0)
-url_entry = Entry(root, width=40, font=("Arial", 14), fg=font_color, background=background_color, borderwidth=1)
-url_entry.focus()
-url_entry.grid(row=1, column=0)
-url_entry.grid_configure(padx=12)
+    def download_stream(self, url, format, path):
+        path = str(path)
+            
+        try:
+            self.youtube = YouTube(url, on_progress_callback=self.on_progress_download,use_oauth=False, allow_oauth_cache=False)
+            self.youtube.bypass_age_gate()
+            self.filename = self.youtube.title.replace('\\', " ").replace(">", " ").replace('"', " ").replace("/", " ").replace("|", " ").replace(".", " ").replace("?", " ").replace("*", " ").replace("&", " ").replace(":", " ").replace("<", " ")
+                
+            if format == "video":
+                stream = self.youtube.streams.get_highest_resolution()
+                filename = "(video) "+filename
+                if not path:
+                    path = self.download_location
+                    path = os.path.join(path, filename) 
+                else:
+                    path = os.path.join(path, filename)
+                    stream.download(output_path=path)
 
-### DOWNLOAD LOCATION #######
-download_location_label = Button(root, text="Download path: {}".format(download_location), command=get_downloads_folder_path)
-download_location_label.config(anchor="center", font=("Arial", 9), fg=font_color, background=background_color, padx=12, relief=RIDGE)
-download_location_label.grid(row=2, column=0)
-download_location_label.grid_configure(pady=12)
-#download_location_label["border"]="0"
+            elif format=="audio":
+                stream = self.youtube.streams.get_audio_only()
+                self.filename = "(audio) "+self.filename
+                if not path:
+                    
+                    path = self.download_location
+                    path = os.path.join(path, self.filename) 
+                else:
+                    
+                    path = os.path.join(path, self.filename)
+                    stream.download(output_path=path)
+                
+        except Exception as e:
+            print("-> Error: " + str(e))
 
-### URL CHECK ###############
-check_button = Button(root,text="Check URL", command=lambda: checkURL(url_entry.get()))
-check_button.config(anchor="center", padx=12, relief=RIDGE, fg=font_color, background=background_color)
-check_button.grid(row=3, column=0)
+    def on_progress_download(self, stream, chunk, bytes_remaining):
 
-### DOWNLOAD BUTTONS ########
-download_audio_btn = Button(root, text="Download Audio", command=lambda: downloadAudio(url_entry.get(), download_location))
-download_audio_btn.config(relief=RIDGE, fg=font_color, background=background_color, padx=12)
-download_video_btn = Button(root, text="Download Video", command=lambda: downloadVideo(url_entry.get(), download_location))
-download_video_btn.config(relief=RIDGE, fg=font_color, background=background_color, padx=12)
+        self.download_location_label.config(state="disabled")
+        self.download_video_btn.config(state="disabled")
+        self.download_audio_btn.config(state="disabled")
+        self.check_button.config(state="disabled")
+        self.url.config(state="disabled")
+
+        total_size = stream.filesize
+        bytes_downloaded = total_size - bytes_remaining
+        percentage_of_completion = round(bytes_downloaded / total_size * 100, 2)
+        string_percentage = f"Downloading: {percentage_of_completion} %"
+        download_label = Label(root, text=string_percentage)
+        download_label.config(fg=font_color, background=background_color, font=("Arial", 9))
+        download_label.grid(row=8, column=0)
+        root.update()
+        download_label.grid_remove()
+            
+        if percentage_of_completion == 100 :
+
+            self.download_location_label.config(state="normal")
+            self.url_error.grid_remove()
+            self.url_shorted_title.grid_remove()
+            self.download_video_btn.config(state="disabled")
+            self.download_audio_btn.config(state="disabled")
+            self.download_audio_btn.grid_remove()
+            self.download_video_btn.grid_remove()
+            self.check_button.config(state="normal")
+            self.url.config(state="normal")
+            self.succes.grid(row=5, column=0)
+            self.succes.grid_configure(pady=12)
+            self.info.grid(row=6, column=0)
+            self.info.grid_configure(pady=12) 
 
 
-### SUCCESS/ERROR LOGS ######
-url_ok = Label(root, text="URL OK! ✔")
-url_ok.config(background=background_color, fg="green", font=("Arial", 9), pady=12, padx=12)
-url_error = Label(root, text="Error: URL not valid, please try to use a valid one.")
-url_error.config(fg="red" ,background=background_color, font=("Arial", 9), pady=12, padx=12)
-succes = Label(root, text="Download completed! ✔")
-succes.configure(background=background_color, fg="green", font=("Arial", 12))
-info = Label(root, text="(Copy and paste another URL for continue downloading)")
-info.configure(background=background_color, fg=font_color, font=("Arial", 9))
+if __name__ == '__main__':
 
+    ### COLOR SCHEMA ############
+    background_color = "#313338"
+    font_color = "#FFFFFF"
 
-    
+    ### MAIN FRAME SETTINGS #####
+    root = Tk()
+    root.resizable(False, False)
+    root.geometry("475x400")
+    root.config(bg=background_color)
+    root.title("YouTube Downloader")
+    root.iconbitmap("icon.ico")
 
-### MAIN LOOP ###############
-root.mainloop()
+    ### GETYT CLASS INSTANCE ####
+    getyt_instance = getyt()
+
+    ### MAIN LOOP ###############
+    root.mainloop()
 
 # This program is freely available for anyone to use, but please use it responsibly.
 # Please respect the copyright of others and don't misuse this code for illegal purposes.
