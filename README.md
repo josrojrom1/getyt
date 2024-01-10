@@ -27,9 +27,13 @@ Hi im tric0, and getyt is a tool designed in Python to learn how to work with Yo
         
             Change directory and go inside the new folder called "getyt":
             - cd getyt
+
+            Create virtual environment:
+            - python -m venv venv_getyt
             
             Activate virtual environment:
-            - source venv_getyt/bin/activate
+            - source venv_getyt/bin/activate (Linux)
+            - source venv_getyt/Scripts/activate (Windows)
         
             Install the dependencies:
             - pip install -r requirements.txt 
