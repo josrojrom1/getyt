@@ -69,6 +69,9 @@ class getyt:
         self.succes.configure(background=background_color, fg="green", font=("Arial", 12))
         self.info = Label(root, text="(Copy and paste another URL for continue downloading)")
         self.info.configure(background=background_color, fg=font_color, font=("Arial", 9))
+        self.cant_download_label = Label(root, text="Can't download this stream")
+        self.cant_download_label.configure(anchor="center", font=("Arial", 9), fg="red", background=background_color, padx=12, pady=12)
+
 
     def on_click_download_location(self):
         self.new_download_location = filedialog.askdirectory()
@@ -92,7 +95,8 @@ class getyt:
         self.download_audio_btn.config(state="normal")
         self.download_audio_btn.grid_remove()
         self.download_video_btn.grid_remove()
-        self.url_shorted_title.grid_remove()   
+        self.url_shorted_title.grid_remove()
+        self.cant_download_label.grid_remove()   
             
         try:
             ### URL INPUT ###############
@@ -162,12 +166,10 @@ class getyt:
                     stream.download(output_path=path)
                 
         except Exception as e:
-
-            self.cant_download_label = Label(root, text=str(e))
-            self.cant_download_label.config(anchor="center", font=("Arial", 9), fg="red", background=background_color, padx=12, pady=12)
+            self.cant_download_label.configure(text=str(e))
             self.cant_download_label.grid(row=9, column=0)
 
-            print("-> Error: " + str(e))
+            #print("-> Error: " + str(e))
 
     def on_progress_download(self, stream, chunk, bytes_remaining):
 
