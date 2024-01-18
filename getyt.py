@@ -132,9 +132,8 @@ class getyt:
         path = str(path)
             
         try:
-            self.youtube = YouTube(url, on_progress_callback=self.on_progress_download,use_oauth=True, allow_oauth_cache=True)
+            self.youtube = YouTube(url, on_progress_callback=self.on_progress_download,use_oauth=False, allow_oauth_cache=False)
             #self.youtube.bypass_age_gate()
-            self.youtube.age_restricted == False
             self.filename = self.youtube.title.replace('\\', " ").replace(">", " ").replace('"', " ").replace("/", " ").replace("|", " ").replace(".", " ").replace("?", " ").replace("*", " ").replace("&", " ").replace(":", " ").replace("<", " ")
            
      
@@ -164,7 +163,9 @@ class getyt:
                 
         except Exception as e:
 
-
+            self.cant_download_label = Label(root, text=str(e))
+            self.cant_download_label.config(anchor="center", font=("Arial", 9), fg="red", background=background_color, padx=12, pady=12)
+            self.cant_download_label.grid(row=9, column=0)
 
             print("-> Error: " + str(e))
 
