@@ -27,6 +27,8 @@ from tkinter import Button
 from tkinter import RIDGE
 from tkinter import filedialog
 from pytube import YouTube
+from pytube import exceptions
+from pytube.innertube import InnerTube
 
 class getyt:
     def __init__(self):
@@ -123,23 +125,29 @@ class getyt:
                 self.url_ok.grid_remove()
                 self.download_video_btn.grid_remove()
                 self.download_audio_btn.grid_remove()
-    
+
+
+
     def download_stream(self, url, format, path):
         path = str(path)
             
         try:
-            self.youtube = YouTube(url, on_progress_callback=self.on_progress_download,use_oauth=False, allow_oauth_cache=False)
-            self.youtube.bypass_age_gate()
+            self.youtube = YouTube(url, on_progress_callback=self.on_progress_download,use_oauth=True, allow_oauth_cache=True)
+            #self.youtube.bypass_age_gate()
+            self.youtube.age_restricted == False
             self.filename = self.youtube.title.replace('\\', " ").replace(">", " ").replace('"', " ").replace("/", " ").replace("|", " ").replace(".", " ").replace("?", " ").replace("*", " ").replace("&", " ").replace(":", " ").replace("<", " ")
+           
+     
+
                 
             if format == "video":
                 stream = self.youtube.streams.get_highest_resolution()
-                filename = "(video) "+filename
+                self.filename = "(video) "+self.filename
                 if not path:
                     path = self.download_location
-                    path = os.path.join(path, filename) 
+                    path = os.path.join(path, self.filename) 
                 else:
-                    path = os.path.join(path, filename)
+                    path = os.path.join(path, self.filename)
                     stream.download(output_path=path)
 
             elif format=="audio":
@@ -155,6 +163,9 @@ class getyt:
                     stream.download(output_path=path)
                 
         except Exception as e:
+
+
+
             print("-> Error: " + str(e))
 
     def on_progress_download(self, stream, chunk, bytes_remaining):
