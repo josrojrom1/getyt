@@ -1,4 +1,4 @@
-# getyt v3.1.0
+# getyt v3.1.1
 Welcome to getyt project!
 
 Hi im tric0, and getyt is a tool designed in Python to learn how to work with Youtube streams, only for legal purposes.
@@ -62,5 +62,7 @@ Hi im tric0, and getyt is a tool designed in Python to learn how to work with Yo
     - Error logs
     - Download audio from YouTube URL
     - Download highest resolution video from Youtube URL
-    - Download folder path selector
-    - Try to bypass age restricted video
+    - Select download path folder
+    - Bypass age restricted videos (most of links)
+    - Download private and hidden links
+    - Red log when try to download some rare links
