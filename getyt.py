@@ -27,6 +27,7 @@ from tkinter import Button
 from tkinter import RIDGE
 from tkinter import filedialog
 from tkinter import PhotoImage
+from tkinter import messagebox
 from pytube import YouTube
 from pytube import exceptions
 from pytube.innertube import InnerTube
@@ -135,7 +136,18 @@ class getyt:
                 self.download_audio_btn.grid_remove()
 
 
-
+    def check_if_path_exists(self, path, stream):
+    # Verificar si el archivo ya existe en la ruta de descarga
+        if os.path.exists(path):
+            # Opción 2: Agregar un número al final del nombre del archivo
+            count = 1
+            while os.path.exists(path):
+                new_filename = f"{self.filename} ({count})"
+                path = os.path.join(self.download_location, new_filename)
+                count += 1
+            stream.download(output_path=path, filename=new_filename)  # Descargar con un nombre único
+        else:
+            stream.download(output_path=path)  # Descargar normalmente si el archivo no existe
     def download_stream(self, url, format, path):
         path = str(path)
 
@@ -152,35 +164,32 @@ class getyt:
             self.youtube = YouTube(url, on_progress_callback=self.on_progress_download,use_oauth=False, allow_oauth_cache=False)
             #self.youtube.bypass_age_gate()
             self.filename = self.youtube.title.replace('\\', " ").replace(">", " ").replace('"', " ").replace("/", " ").replace("|", " ").replace(".", " ").replace("?", " ").replace("*", " ").replace("&", " ").replace(":", " ").replace("<", " ")
-                
+
+            # Refactorizar codigo    
             if format == "video":
                 stream = self.youtube.streams.get_highest_resolution()
                 self.filename = "(video) "+self.filename
                 if not path:
                     path = self.download_location
-                    path = os.path.join(path, self.filename) 
-                else:
-                    path = os.path.join(path, self.filename)
-                    stream.download(output_path=path)
+                path = os.path.join(path, self.filename) 
+                self.check_if_path_exists(path, stream)
 
             elif format=="audio":
                 stream = self.youtube.streams.get_audio_only()
                 self.filename = "(audio) "+self.filename
-                if not path:
-                    
+                if not path:    
                     path = self.download_location
-                    path = os.path.join(path, self.filename) 
-                else:
-                    
-                    path = os.path.join(path, self.filename)
-                    stream.download(output_path=path)
-
+                path = os.path.join(path, self.filename) 
+                self.check_if_path_exists(path, stream)
+                
 
         except Exception as e:
             self.cant_download_label.configure(text=str(e))
             self.cant_download_label.grid(row=9, column=0)
+            print(f"{self.cant_download_label}")
 
             #print("-> Error: " + str(e))
+
 
     def on_progress_download(self, stream, chunk, bytes_remaining):
 
