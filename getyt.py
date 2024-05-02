@@ -145,6 +145,7 @@ class getyt:
         self.download_video_btn.grid_remove()
         self.download_audio_btn.place_forget()
         self.download_video_btn.place_forget()
+        self.url_ok.grid_remove()
 
 
         try:
@@ -219,7 +220,7 @@ if __name__ == '__main__':
     ### MAIN FRAME SETTINGS #####
     root = Tk()
     root.resizable(False, False)
-    root.geometry("430x400")
+    root.geometry("430x345")
     root.config(bg=background_color)
     root.title("YouTube Downloader")
 
