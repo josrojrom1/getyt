@@ -193,8 +193,9 @@ class getyt:
         percentage_of_completion = round(bytes_downloaded / total_size * 100, 2)
         string_percentage = f"Downloading: {percentage_of_completion} %"
         download_label = Label(root, text=string_percentage)
-        download_label.config(fg=font_color, background=background_color, font=("Arial", 9))
+        download_label.config(fg=font_color, background=background_color, font=("Arial", 9), pady=25)
         download_label.grid(row=8, column=0)
+        
         root.update()
         download_label.grid_remove()
             
