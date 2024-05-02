@@ -110,11 +110,14 @@ class getyt:
             self.url_shorted_title.config(anchor="center", background=background_color, fg=font_color, font=("Arial", 12), padx=12, pady=12)
             self.url_shorted_title.grid(row=5, column=0)
             ### DOWNLOAD BUTTONS ########
-            self.download_audio_btn.config(relief=RIDGE, fg=font_color, background=background_color, padx=12)
+            self.download_audio_btn.config(relief=RIDGE, fg=font_color, background=background_color)
             self.download_audio_btn.grid(row=6, column=0)
-            self.download_video_btn.config(relief=RIDGE, fg=font_color, background=background_color, padx=12)
-            self.download_video_btn.grid(row=7, column=0)
-            self.download_video_btn.grid_configure(pady=12)
+            self.download_video_btn.config(relief=RIDGE, fg=font_color, background=background_color)
+            self.download_video_btn.grid(row=6, column=0)
+            self.download_audio_btn.place(x=90,y=250)
+            self.download_video_btn.place(x=225,y=250)
+
+            #self.download_video_btn.grid_configure(pady=12)
             ### OK LOG/GREEN CHECK ######
             self.url_ok.config(background=background_color, fg="green", font=("Arial", 9), pady=12, padx=12)
             self.url_ok.grid(row=4, column=0)
@@ -135,14 +138,19 @@ class getyt:
 
     def download_stream(self, url, format, path):
         path = str(path)
-            
+
+        self.download_video_btn.config(state="disabled")
+        self.download_audio_btn.config(state="disabled")
+        self.download_audio_btn.grid_remove()
+        self.download_video_btn.grid_remove()
+        self.download_audio_btn.place_forget()
+        self.download_video_btn.place_forget()
+
+
         try:
             self.youtube = YouTube(url, on_progress_callback=self.on_progress_download,use_oauth=False, allow_oauth_cache=False)
             #self.youtube.bypass_age_gate()
             self.filename = self.youtube.title.replace('\\', " ").replace(">", " ").replace('"', " ").replace("/", " ").replace("|", " ").replace(".", " ").replace("?", " ").replace("*", " ").replace("&", " ").replace(":", " ").replace("<", " ")
-           
-     
-
                 
             if format == "video":
                 stream = self.youtube.streams.get_highest_resolution()
@@ -165,7 +173,8 @@ class getyt:
                     
                     path = os.path.join(path, self.filename)
                     stream.download(output_path=path)
-                
+
+
         except Exception as e:
             self.cant_download_label.configure(text=str(e))
             self.cant_download_label.grid(row=9, column=0)
@@ -175,8 +184,6 @@ class getyt:
     def on_progress_download(self, stream, chunk, bytes_remaining):
 
         self.download_location_label.config(state="disabled")
-        self.download_video_btn.config(state="disabled")
-        self.download_audio_btn.config(state="disabled")
         self.check_button.config(state="disabled")
         self.url.config(state="disabled")
 
@@ -195,10 +202,6 @@ class getyt:
             self.download_location_label.config(state="normal")
             self.url_error.grid_remove()
             self.url_shorted_title.grid_remove()
-            self.download_video_btn.config(state="disabled")
-            self.download_audio_btn.config(state="disabled")
-            self.download_audio_btn.grid_remove()
-            self.download_video_btn.grid_remove()
             self.check_button.config(state="normal")
             self.url.config(state="normal")
             self.succes.grid(row=5, column=0)
@@ -216,7 +219,7 @@ if __name__ == '__main__':
     ### MAIN FRAME SETTINGS #####
     root = Tk()
     root.resizable(False, False)
-    root.geometry("475x400")
+    root.geometry("430x400")
     root.config(bg=background_color)
     root.title("YouTube Downloader")
 
