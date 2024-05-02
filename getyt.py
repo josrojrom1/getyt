@@ -26,6 +26,7 @@ from tkinter import Entry
 from tkinter import Button
 from tkinter import RIDGE
 from tkinter import filedialog
+from tkinter import PhotoImage
 from pytube import YouTube
 from pytube import exceptions
 from pytube.innertube import InnerTube
@@ -49,7 +50,7 @@ class getyt:
         if os.name == "nt":
             # Windows
             self.download_location = os.path.join(os.getenv("USERPROFILE"), "Downloads")
-        #else:
+        elif os.name == "posix":
             # Linux or macOS
             self.download_location = os.path.join(os.path.expanduser("~"), "Downloads")
         ### DOWNLOAD LOCATION #######
@@ -218,7 +219,9 @@ if __name__ == '__main__':
     root.geometry("475x400")
     root.config(bg=background_color)
     root.title("YouTube Downloader")
-    root.iconbitmap("icon.ico")
+
+    icon = PhotoImage(file="icon.png")
+    root.iconphoto(True, icon)
 
     ### GETYT CLASS INSTANCE ####
     getyt_instance = getyt()
