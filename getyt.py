@@ -181,8 +181,12 @@ class getyt:
             #print(str(e))
             #print("-> Error: " + str(e))
 
+    #def abort_downloading(self, stream):
+    #    stream.stop_download()
+    #    download_label = Label(root, text="Download cancelled")
 
     def on_progress_download(self, stream, chunk, bytes_remaining):
+        self.is_cancelled=False
 
         self.download_location_label.config(state="disabled")
         self.check_button.config(state="disabled")
@@ -190,12 +194,17 @@ class getyt:
         total_size = stream.filesize
         bytes_downloaded = total_size - bytes_remaining
         percentage_of_completion = round(bytes_downloaded / total_size * 100, 2)
-        string_percentage = f"Downloading: {percentage_of_completion} %   ( {bytes_downloaded/(1024*1024)} / {int(total_size/(1024*1024))} ) Mb"
-        download_label = Label(root, text=string_percentage)
-        download_label.config(fg=font_color, background=background_color, font=("Arial", 9), pady=25)
-        download_label.grid(row=8, column=0)        
+        string_percentage = f"Downloading:  {percentage_of_completion} %   ( {bytes_downloaded/(1024*1024)} / {int(total_size/(1024*1024))} ) Mb"
+        self.download_label = Label(root, text=string_percentage)
+        self.download_label.config(fg=font_color, background=background_color, font=("Arial", 9), pady=25)
+        self.download_label.grid(row=8, column=0)
+
+        #self.cancel_btn = Button(root,text="Cancel", command=lambda: self.abort_downloading(stream))
+        #self.cancel_btn.grid(row=9, column=0)
+            
+
         root.update()
-        download_label.grid_remove()
+        self.download_label.grid_remove()
             
         if percentage_of_completion == 100 :
 
