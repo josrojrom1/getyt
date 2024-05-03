@@ -137,7 +137,7 @@ class getyt:
 
 
     def check_if_path_exists(self, path, stream):
-    # Verificar si el archivo ya existe en la ruta de descarga
+    # Comprobar si el archivo ya existe en la ruta de descarga
         if os.path.exists(path):
             # Opción 2: Agregar un número al final del nombre del archivo
             count = 1
@@ -145,9 +145,9 @@ class getyt:
                 new_filename = f"{self.filename} ({count})"
                 path = os.path.join(self.download_location, new_filename)
                 count += 1
-            stream.download(output_path=path, filename=new_filename)  # Descargar con un nombre único
+            stream.download(output_path=path, filename=new_filename, max_retries=5)
         else:
-            stream.download(output_path=path)  # Descargar normalmente si el archivo no existe
+            stream.download(output_path=path, max_retries=5)
     def download_stream(self, url, format, path):
         path = str(path)
 
@@ -186,7 +186,7 @@ class getyt:
         except Exception as e:
             self.cant_download_label.configure(text=str(e))
             self.cant_download_label.grid(row=9, column=0)
-            print(f"{self.cant_download_label}")
+            print(str(e))
 
             #print("-> Error: " + str(e))
 
