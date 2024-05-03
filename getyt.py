@@ -129,12 +129,11 @@ class getyt:
             ### INVALID URL INPUT #######
             self.url_error.config(fg="red" ,background=background_color, font=("Arial", 9), pady=12, padx=12)
             self.url_error.grid(row=4, column=0)
-                
-        if self.url_error.winfo_ismapped():
-                self.url_ok.grid_remove()
-                self.download_video_btn.grid_remove()
-                self.download_audio_btn.grid_remove()
-
+            self.download_video_btn.grid_remove()
+            self.download_audio_btn.grid_remove()
+            self.download_audio_btn.place_forget()
+            self.download_video_btn.place_forget()
+            self.url_ok.grid_remove()
 
     def check_if_path_exists(self, path, stream):
     # Comprobar si el archivo ya existe en la ruta de descarga
