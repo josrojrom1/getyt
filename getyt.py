@@ -39,10 +39,10 @@ class getyt:
         self.url_label.config(anchor="center", font=("Arial", 18), fg=font_color, background=background_color, padx=12, pady=12)
         self.url_label.grid(row=0, column=0)
         ### URL ENTRY ################
-        self.url = Entry(root, width=40, font=("Arial", 14), fg=font_color, background=background_color, borderwidth=1)
+        self.url = Entry(root)
+        self.url.config(width=40, font=("Arial", 14), fg=font_color, background=background_color, borderwidth=1)
         self.url.focus()
-        self.url.grid(row=1, column=0)
-        self.url.grid_configure(padx=12)
+        self.url.grid(row=1, column=0, padx=12)
         ### CHECK BUTTON #############
         self.check_button = Button(root,text="Check URL", command=lambda: self.checkURL(getyt_instance.url.get()))
         self.check_button.config(anchor="center", padx=12, relief=RIDGE, fg=font_color, background=background_color)
@@ -51,7 +51,7 @@ class getyt:
         if os.name == "nt":
             # Windows
             self.download_location = os.path.join(os.getenv("USERPROFILE"), "Downloads")
-        elif os.name == "posix":
+        else:  
             # Linux or macOS
             self.download_location = os.path.join(os.path.expanduser("~"), "Downloads")
         ### DOWNLOAD LOCATION #######
@@ -117,8 +117,6 @@ class getyt:
             self.download_video_btn.grid(row=6, column=0)
             self.download_audio_btn.place(x=90,y=250)
             self.download_video_btn.place(x=225,y=250)
-
-            #self.download_video_btn.grid_configure(pady=12)
             ### OK LOG/GREEN CHECK ######
             self.url_ok.config(background=background_color, fg="green", font=("Arial", 9), pady=12, padx=12)
             self.url_ok.grid(row=4, column=0)
@@ -129,17 +127,15 @@ class getyt:
             ### INVALID URL INPUT #######
             self.url_error.config(fg="red" ,background=background_color, font=("Arial", 9), pady=12, padx=12)
             self.url_error.grid(row=4, column=0)
-                
-        if self.url_error.winfo_ismapped():
-                self.url_ok.grid_remove()
-                self.download_video_btn.grid_remove()
-                self.download_audio_btn.grid_remove()
-
-
+            self.download_video_btn.grid_remove()
+            self.download_audio_btn.grid_remove()
+            self.download_audio_btn.place_forget()
+            self.download_video_btn.place_forget()
+            self.url_ok.grid_remove()
+    #################################################
+    # CHECK IF FILE ALREADY EXISTS IN DOWNLOAD PATH #
     def check_if_path_exists(self, path, stream):
-    # Comprobar si el archivo ya existe en la ruta de descarga
         if os.path.exists(path):
-            # Opción 2: Agregar un número al final del nombre del archivo
             count = 1
             while os.path.exists(path):
                 new_filename = f"{self.filename} ({count})"
@@ -148,9 +144,10 @@ class getyt:
             stream.download(output_path=path, filename=new_filename, max_retries=5)
         else:
             stream.download(output_path=path, max_retries=5)
+    ##########################
+    # DOWNLOAD MAIN FUNCTION #
     def download_stream(self, url, format, path):
         path = str(path)
-
         self.download_video_btn.config(state="disabled")
         self.download_audio_btn.config(state="disabled")
         self.download_audio_btn.grid_remove()
@@ -159,54 +156,55 @@ class getyt:
         self.download_video_btn.place_forget()
         self.url_ok.grid_remove()
 
-
         try:
             self.youtube = YouTube(url, on_progress_callback=self.on_progress_download,use_oauth=False, allow_oauth_cache=False)
             #self.youtube.bypass_age_gate()
-            self.filename = self.youtube.title.replace('\\', " ").replace(">", " ").replace('"', " ").replace("/", " ").replace("|", " ").replace(".", " ").replace("?", " ").replace("*", " ").replace("&", " ").replace(":", " ").replace("<", " ")
+            self.filename = self.youtube.title#.replace('\\', " ").replace(">", " ").replace('"', " ").replace("/", " ").replace("|", " ").replace(".", " ").replace("?", " ").replace("*", " ").replace("&", " ").replace(":", " ").replace("<", " ")
 
             # Refactorizar codigo    
             if format == "video":
                 stream = self.youtube.streams.get_highest_resolution()
                 self.filename = "(video) "+self.filename
-                if not path:
-                    path = self.download_location
-                path = os.path.join(path, self.filename) 
-                self.check_if_path_exists(path, stream)
-
+                
             elif format=="audio":
                 stream = self.youtube.streams.get_audio_only()
                 self.filename = "(audio) "+self.filename
-                if not path:    
-                    path = self.download_location
-                path = os.path.join(path, self.filename) 
-                self.check_if_path_exists(path, stream)
-                
 
+            if not path:    
+                path = self.download_location
+            path = os.path.join(path, self.filename) 
+            self.check_if_path_exists(path, stream)
+                
         except Exception as e:
             self.cant_download_label.configure(text=str(e))
             self.cant_download_label.grid(row=9, column=0)
-            print(str(e))
-
+            #print(str(e))
             #print("-> Error: " + str(e))
 
+    #def abort_downloading(self, stream):
+    #    stream.stop_download()
+    #    download_label = Label(root, text="Download cancelled")
 
     def on_progress_download(self, stream, chunk, bytes_remaining):
+        self.is_cancelled=False
 
         self.download_location_label.config(state="disabled")
         self.check_button.config(state="disabled")
         self.url.config(state="disabled")
-
         total_size = stream.filesize
         bytes_downloaded = total_size - bytes_remaining
         percentage_of_completion = round(bytes_downloaded / total_size * 100, 2)
-        string_percentage = f"Downloading: {percentage_of_completion} %"
-        download_label = Label(root, text=string_percentage)
-        download_label.config(fg=font_color, background=background_color, font=("Arial", 9), pady=25)
-        download_label.grid(row=8, column=0)
-        
+        string_percentage = f"Downloading:  {percentage_of_completion} %   ( {bytes_downloaded/(1024*1024)} / {int(total_size/(1024*1024))} ) Mb"
+        self.download_label = Label(root, text=string_percentage)
+        self.download_label.config(fg=font_color, background=background_color, font=("Arial", 9), pady=25)
+        self.download_label.grid(row=8, column=0)
+
+        #self.cancel_btn = Button(root,text="Cancel", command=lambda: self.abort_downloading(stream))
+        #self.cancel_btn.grid(row=9, column=0)
+            
+
         root.update()
-        download_label.grid_remove()
+        self.download_label.grid_remove()
             
         if percentage_of_completion == 100 :
 
@@ -220,30 +218,20 @@ class getyt:
             self.info.grid(row=6, column=0)
             self.info.grid_configure(pady=12) 
 
-
 if __name__ == '__main__':
 
     ### COLOR SCHEMA ############
     background_color = "#313338"
     font_color = "#FFFFFF"
-
     ### MAIN FRAME SETTINGS #####
     root = Tk()
     root.resizable(False, False)
     root.geometry("430x345")
     root.config(bg=background_color)
     root.title("YouTube Downloader")
-
     icon = PhotoImage(file="icon.png")
     root.iconphoto(True, icon)
-
     ### GETYT CLASS INSTANCE ####
     getyt_instance = getyt()
-
     ### MAIN LOOP ###############
     root.mainloop()
-
-# This program is freely available for anyone to use, but please use it responsibly.
-# Please respect the copyright of others and don't misuse this code for illegal purposes.
-# If you find this code useful, please consider sharing it with others.
-# Let's make the world a better place with open-source software!
