@@ -226,7 +226,7 @@ if __name__ == '__main__':
     ### MAIN FRAME SETTINGS #####
     root = Tk()
     root.resizable(False, False)
-    root.geometry("430x345")
+    root.geometry("470x345")
     root.config(bg=background_color)
     root.title("YouTube Downloader")
     icon = PhotoImage(file="icon.png")
